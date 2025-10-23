@@ -1,0 +1,6 @@
+admin_blog_controllers:
+    resource:
+        path: ../../src/Blog/Infrastructure/Http/Admin/Blog
+        namespace: App\Blog\Infrastructure\Http\Admin\Blog
+    type: attribute
+    prefix: /admin

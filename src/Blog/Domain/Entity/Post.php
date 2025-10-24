@@ -6,6 +6,7 @@ namespace App\Blog\Domain\Entity;
 
 use App\Blog\Domain\ValueObject\Post\PostId;
 use App\Blog\Domain\ValueObject\Post\PostStatus;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,83 +27,46 @@ class Post
     private string $content;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $publishedAt = null;
+    private ?DateTimeImmutable $publishedAt = null;
 
     #[ORM\Column(length: 255)]
     private PostStatus $status;
 
-    public function __construct(PostId $id)
+    public function __construct(PostId $id, PostStatus $status)
     {
         $this->id = $id->value();
-    }
-
-    public static function create():self
-    {
-        return new self(PostId::generate());
-    }
-
-   public function id(): PostId
-   {
-       return PostId::fromString($this->id);
-   }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): static
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function getPublishedAt(): ?\DateTimeImmutable
-    {
-        return $this->publishedAt;
-    }
-
-    public function setPublishedAt(?\DateTimeImmutable $publishedAt): static
-    {
-        $this->publishedAt = $publishedAt;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
         $this->status = $status;
-
-        return $this;
     }
+
+    public static function create(): self
+    {
+        return new self(
+            id: PostId::generate(),
+            status: PostStatus::DRAFT
+        );
+    }
+
+    public function id(): PostId
+    {
+        return PostId::fromString($this->id);
+    }
+
+    public function publish(): void
+    {
+      $this->publishedAt = new DateTimeImmutable();
+      $this->status = PostStatus::PUBLISHED;
+    }
+
+    public function unpublish():void
+    {
+        $this->publishedAt = null;
+        $this->status = PostStatus::DRAFT;
+    }
+
+    public function archive(): void
+    {
+        $this->publishedAt = null;
+        $this->status = PostStatus::ARCHIVED;
+    }
+
 }

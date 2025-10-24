@@ -7,6 +7,7 @@ namespace App\Common\Domain\ValueObject;
 
 
 
+use App\Common\Domain\Exception\InvalidIdentifierException;
 use Symfony\Component\Uid\Uuid;
 
 abstract readonly class Id
@@ -16,9 +17,7 @@ abstract readonly class Id
     )
     {
         if (!Uuid::isValid($value)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid UUID for %s', static::class)
-            );
+            throw new InvalidIdentifierException();
         }
 
     }

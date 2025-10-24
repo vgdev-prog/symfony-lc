@@ -6,7 +6,7 @@ namespace App\Common\Domain\Exception;
 
 abstract class AbstractDomainException extends \DomainException
 {
-    final public static function getStatusCode(): int
+    public static function getStatusCode(): int
     {
         return 400;
     }

@@ -2,3 +2,5 @@ routes:
     resource: routes/
     type: directory
     prefix: /api/v1
+    defaults:
+        _format: json

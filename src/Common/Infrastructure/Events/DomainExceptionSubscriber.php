@@ -58,7 +58,7 @@ final readonly class DomainExceptionSubscriber implements EventSubscriberInterfa
         }
 
         if ($this->environment === 'dev') {
-            $responseData['error']['trace'] = array_slice($exception->getTrace(), 0, 5);
+            $responseData['error']['trace'] = array_slice($exception->getTrace(), 0, 10);
         }
 
 

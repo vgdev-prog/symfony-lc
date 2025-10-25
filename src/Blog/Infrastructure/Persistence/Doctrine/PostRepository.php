@@ -3,13 +3,14 @@
 namespace App\Blog\Infrastructure\Persistence\Doctrine;
 
 use App\Blog\Domain\Entity\Post;
+use App\Blog\Domain\Repository\PostRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Post>
  */
-class PostRepository extends ServiceEntityRepository
+class PostRepository extends ServiceEntityRepository implements PostRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

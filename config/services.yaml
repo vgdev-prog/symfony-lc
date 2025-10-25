@@ -27,3 +27,13 @@ services:
         arguments:
             $environment: '%kernel.environment%'
         tags: ['kernel.event_subscriber']
+
+
+    App\Blog\Domain\Repository\CategoryRepositoryInterface:
+        alias: App\Blog\Infrastructure\Persistence\Doctrine\CategoryRepository
+
+    App\Blog\Domain\Repository\PostRepositoryInterface:
+        alias: App\Blog\Infrastructure\Persistence\Doctrine\PostRepository;
+
+    App\Blog\Domain\Repository\TagRepositoryInterface:
+        alias: App\Blog\Infrastructure\Persistence\Doctrine\TagRepository;

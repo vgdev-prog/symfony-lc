@@ -7,7 +7,7 @@ namespace App\Blog\Domain\Entity;
 use App\Blog\Infrastructure\Persistence\Doctrine\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Entity()]
 class Category
 {
     #[ORM\Id]

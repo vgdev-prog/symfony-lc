@@ -7,7 +7,7 @@ namespace App\Blog\Domain\Entity;
 use App\Blog\Infrastructure\Persistence\Doctrine\TagRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TagRepository::class)]
+#[ORM\Entity()]
 class Tag
 {
     #[ORM\Id]

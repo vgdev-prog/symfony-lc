@@ -3,13 +3,14 @@
 namespace App\Blog\Infrastructure\Persistence\Doctrine;
 
 use App\Blog\Domain\Entity\Tag;
+use App\Blog\Domain\Repository\TagRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Tag>
  */
-class TagRepository extends ServiceEntityRepository
+class TagRepository extends ServiceEntityRepository implements TagRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

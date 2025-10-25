@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Blog\Domain\Entity;
 
+use App\Blog\Domain\Exception\PostNotReadyForPublicationException;
 use App\Blog\Domain\ValueObject\Post\PostId;
 use App\Blog\Domain\ValueObject\Post\PostStatus;
 use App\Common\Domain\Entity\Model;
@@ -64,18 +65,27 @@ class Post extends Model
         $this->title = $title;
     }
 
-    public function changeDescription(string $description): void
+    public function changeDescription(string $description, Locale $locale): void
     {
+        $this->setTranslatableLocale($locale);
         $this->description = $description;
+    }
+
+    public function changeContent(string $content, Locale $locale): void
+    {
+        $this->setTranslatableLocale($locale);
+        $this->content = $content;
     }
 
     public function publish(): void
     {
-      $this->publishedAt = new DateTimeImmutable();
-      $this->status = PostStatus::PUBLISHED;
+        $this->ensureCanBePublished();
+        
+        $this->publishedAt = new DateTimeImmutable();
+        $this->status = PostStatus::PUBLISHED;
     }
 
-    public function unpublish():void
+    public function unpublish(): void
     {
         $this->publishedAt = null;
         $this->status = PostStatus::DRAFT;
@@ -86,5 +96,29 @@ class Post extends Model
         $this->publishedAt = null;
         $this->status = PostStatus::ARCHIVED;
     }
+
+    /**
+     * @return void
+     */
+    private function ensureCanBePublished(): void
+    {
+        if ($this->status === PostStatus::PUBLISHED) {
+            throw PostNotReadyForPublicationException::alreadyPublished();
+        }
+
+        if (empty($this->title)) {
+            throw PostNotReadyForPublicationException::missingTitle();
+        }
+
+        if (empty($this->content)) {
+            throw PostNotReadyForPublicationException::missingContent();
+        }
+
+        if (empty($this->description)) {
+            throw PostNotReadyForPublicationException::missingDescription();
+        }
+
+    }
+
 
 }

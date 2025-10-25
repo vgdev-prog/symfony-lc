@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Common\Domain\Trait;
 
-use App\Common\Domain\Locale;
+use App\Common\Domain\Enum\Locale;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**

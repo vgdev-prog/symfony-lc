@@ -7,5 +7,6 @@ namespace App\Common\Domain\Exception;
 enum ErrorCode:string
 {
    case INCORRECT_UUID = 'INCORRECT_UUID';
+   case INCORRECT_ENTITY_TYPE = 'INCORRECT_ENTITY_TYPE';
 
 }

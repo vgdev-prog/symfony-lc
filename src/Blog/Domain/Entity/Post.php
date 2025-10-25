@@ -7,14 +7,17 @@ namespace App\Blog\Domain\Entity;
 use App\Blog\Domain\Exception\PostNotReadyForPublicationException;
 use App\Blog\Domain\ValueObject\Post\PostId;
 use App\Blog\Domain\ValueObject\Post\PostStatus;
+use App\Common\Domain\Attribute\EntityType;
 use App\Common\Domain\Entity\Model;
-use App\Common\Domain\Locale;
+use App\Common\Domain\Entity\SeoMetadata;
+use App\Common\Domain\Enum\Locale;
 use App\Common\Domain\Trait\Translatable;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
+#[EntityType('blog_post')]
 #[ORM\Entity()]
 class Post extends Model
 {
@@ -39,6 +42,9 @@ class Post extends Model
 
     #[ORM\Column(length: 255)]
     private PostStatus $status;
+
+    #[ORM\OneToOne]
+    private SeoMetadata $seoMetadata;
 
     public function __construct(PostId $id, PostStatus $status)
     {
@@ -77,10 +83,21 @@ class Post extends Model
         $this->content = $content;
     }
 
+    /**
+     * @param array<string,string> $seo_metadata
+     * @param Locale $locale
+     * @return void
+     */
+    public function changeSeoMetadata(SeoMetadata $seo_metadata,Locale $locale): void
+    {
+        $this->setTranslatableLocale($locale);
+        $this->seoMetadata = $seo_metadata;
+    }
+
     public function publish(): void
     {
         $this->ensureCanBePublished();
-        
+
         $this->publishedAt = new DateTimeImmutable();
         $this->status = PostStatus::PUBLISHED;
     }

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Common\Domain\ValueObject;
 
-use App\Blog\Domain\Entity\Category;
-use App\Blog\Domain\Entity\Post;
-use App\Blog\Domain\Entity\Tag;
 use App\Common\Domain\Attribute\EntityType;
 use App\Common\Domain\Exception\InvalidEntityTypeException;
 use ReflectionClass;
@@ -17,7 +14,7 @@ class EntityTypeMap
     /**
      * @var array<string, class-string>
      */
-    private static $registry = [];
+    private static array $registry = [];
 
 
     /**

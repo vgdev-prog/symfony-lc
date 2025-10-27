@@ -48,7 +48,7 @@ class PostNotReadyForPublicationException extends AbstractDomainException
        return new static(
             message: 'Already published',
             field: 'status',
-            additionalInfo: "Published post can not be" . PostStatus::PUBLISHED->value
+            additionalInfo: "Published post can not be published again"
         );
     }
 

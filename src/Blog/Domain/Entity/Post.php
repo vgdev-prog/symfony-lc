@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Blog\Domain\Entity;
 
+use App\Blog\Domain\Event\PostPublished;
 use App\Blog\Domain\Exception\PostNotReadyForPublicationException;
 use App\Blog\Domain\ValueObject\Post\PostId;
 use App\Blog\Domain\ValueObject\Post\PostStatus;
@@ -18,14 +19,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[EntityType('blog_post')]
-#[ORM\Entity()]
+#[ORM\Entity('blog_post')]
 class Post extends Model
 {
     use Translatable;
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
-    private string $id;
+    private PostId $id;
 
     #[Gedmo\Translatable]
     #[ORM\Column(length: 255)]
@@ -46,15 +47,29 @@ class Post extends Model
     #[ORM\OneToOne]
     private SeoMetadata $seoMetadata;
 
+    #[ORM\ManyToMany(targetEntity: Category::class)]
+    private Category $category;
+
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    private Tag $tag;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $createdAt = null;
+
+    private ?DateTimeImmutable $updatedAt = null;
+
     /**
      * Post constructor.
      *
      * @param PostId $id Post identifier
      * @param PostStatus $status Initial post status
      */
-    public function __construct(PostId $id, PostStatus $status)
+    public function __construct(
+        PostId $id,
+        PostStatus $status
+    )
     {
-        $this->id = $id->value();
+        $this->id = $id;
         $this->status = $status;
     }
 
@@ -67,7 +82,7 @@ class Post extends Model
     {
         return new self(
             id: PostId::generate(),
-            status: PostStatus::DRAFT
+            status: PostStatus::DRAFT,
         );
     }
 
@@ -86,7 +101,7 @@ class Post extends Model
      */
     public function id(): PostId
     {
-        return PostId::fromString($this->id);
+        return PostId::fromString($this->id->value());
     }
 
     /**
@@ -137,6 +152,36 @@ class Post extends Model
     public function publishedAt(): ?DateTimeImmutable
     {
         return $this->publishedAt;
+    }
+
+    public function isPublished():bool
+    {
+        return $this->status === PostStatus::PUBLISHED;
+    }
+
+    public function isArchived():bool
+    {
+        return $this->status === PostStatus::ARCHIVED;
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status === PostStatus::DRAFT;
+    }
+
+    public function seoMetadata(): ?SeoMetadata
+    {
+        return $this->seoMetadata ?? null;
+    }
+
+    public function categories(): ?Category
+    {
+        return $this->category ?? null;
+    }
+
+    public function tags(): ?Tag
+    {
+        return $this->tag ?? null;
     }
 
     /**
@@ -205,6 +250,8 @@ class Post extends Model
 
         $this->publishedAt = new DateTimeImmutable();
         $this->status = PostStatus::PUBLISHED;
+
+        $this->recordEvent(new PostPublished($this->id));
     }
 
     /**

@@ -16,7 +16,7 @@ final readonly class DomainExceptionSubscriber implements EventSubscriberInterfa
 
     public function __construct(
         private LoggerInterface $logger,
-        private readonly string $environment,
+        private string $environment,
     )
     {
     }
